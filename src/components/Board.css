@@ -15,9 +15,9 @@ body {
 }
 
 .board {
-  width: 500px;
+  /* width: 500px;
+  margin: 10px auto; */
   height: 500px;
-  margin: 10px auto;
   box-sizing: border-box;
   display: block;
 }
@@ -144,6 +144,15 @@ section > h3:first-child {
 }
 .status {
   margin-right: 30px;
+}
+.broken {
+  background-color: rgb(255, 190, 60);
+}
+.solved {
+  background-color: lightgreen;
+}
+.unsolvable {
+  background-color: darkorange;
 }
 
 .ui.basic.button.value-box:hover {

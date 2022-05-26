@@ -2,6 +2,7 @@ import react, { useState } from "react";
 
 const Input = ({ tempTable, changeHandler, i, j }) => {
   const [value, setValue] = useState("");
+  console.log("hi");
 
   const handler = (e) => {
     changeHandler(e);

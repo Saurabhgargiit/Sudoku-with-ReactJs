@@ -137,6 +137,8 @@ function Board(props) {
     });
   });
 
+  const statusClass = `value-box status ${status === "unsolved" ? "" : status}`;
+
   return (
     <>
       <div className="board">{boardArr}</div>
@@ -180,7 +182,7 @@ function Board(props) {
             >
               <icons.checkIcon /> Validate
             </div>
-            <a className="value-box status">{status}</a>
+            <a className={statusClass}>{status}</a>
           </div>
           <div className="ui buttons" tabIndex="0">
             <a className="value-box grade">{difficulty}</a>

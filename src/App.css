@@ -1,1 +1,16 @@
+/* html {
+  width: 500px;
+} */
+.App {
+  width: 500px;
+  margin: 10px auto;
+}
 
+.App h3 {
+  margin: 40px 190px;
+  font-size: 30px;
+}
+
+.footer {
+  margin: 40px auto;
+}
