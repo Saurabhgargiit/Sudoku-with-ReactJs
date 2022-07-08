@@ -108,7 +108,7 @@ function Board(props) {
       .catch((err) => console.log(err));
   };
 
-  console.log("trial");
+  console.log("trial-2");
 
   useEffect(() => {
     axios
