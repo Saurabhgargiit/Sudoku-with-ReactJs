@@ -67,7 +67,6 @@ function Board(props) {
       return new Array(9).fill(0);
     });
     if (grade === "clear") {
-      console.log(tempTable);
       setTable(newTableGenerator());
       return;
     }
@@ -125,11 +124,12 @@ function Board(props) {
       return (
         <Input
           changeHandler={changeHandler}
-          tempTable={[].concat(
-            table.map((el) => {
-              return el;
-            })
-          )}
+          tempTable={tempTable}
+          // tempTable={[].concat(
+          //   table.map((el) => {
+          //     return el;
+          //   })
+          // )}
           i={i}
           j={j}
         />
