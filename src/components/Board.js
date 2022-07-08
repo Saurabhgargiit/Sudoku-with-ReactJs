@@ -108,6 +108,8 @@ function Board(props) {
       .catch((err) => console.log(err));
   };
 
+  console.log("trial");
+
   useEffect(() => {
     axios
       .get(" https://vast-chamber-17969.herokuapp.com/generate?difficulty=easy")
