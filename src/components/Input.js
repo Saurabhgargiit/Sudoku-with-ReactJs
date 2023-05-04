@@ -1,11 +1,9 @@
-import react, { useState } from "react";
 
 const Input = ({ tempTable, changeHandler, i, j }) => {
-  const [value, setValue] = useState("");
 
   const handler = (e) => {
     changeHandler(e);
-    setValue(e.target.value);
+    console.log()
   };
 
   return (

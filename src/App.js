@@ -16,7 +16,7 @@ function App() {
         <a
           className="right-float"
           href="https://github.com/Saurabhgargiit/Saurabhgargiit.github.io"
-          target="_blank"
+          target="_blank" rel="noreferrer"
         >
           check code src
         </a>

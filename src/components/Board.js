@@ -4,54 +4,28 @@ import axios from "axios";
 import * as icons from "./icons";
 import "./Board.css";
 
-let difficulty = "";
-let tempTable = new Array(9).fill().map(() => {
-  return new Array(9).fill(0);
-});
-
-const encodeBoard = (board) =>
-  board.reduce(
-    (result, row, i) =>
-      result +
-      `%5B${encodeURIComponent(row)}%5D${i === board.length - 1 ? "" : "%2C"}`,
-    ""
-  );
-const encodeParams = (params) =>
-  Object.keys(params)
-    .map((key) => key + "=" + `%5B${encodeBoard(params[key])}%5D`)
-    .join("&");
-
-function Board(props) {
+const Board = (props) => {
   const [table, setTable] = useState(
     new Array(9).fill().map(() => {
       return new Array(9).fill(0);
     })
   );
+
+  const [difficulty, setDifficulty] = useState("");
   const [status, setStatus] = useState("unsolved");
 
-  const convert = (puzzle) => {
-    for (const [key, value] of Object.entries(puzzle)) {
-      const [rowName, col] = key.split("");
-      if (rowName === "A") tempTable[0][+col - 1] = +value;
-      else if (rowName === "B") tempTable[1][+col - 1] = +value;
-      else if (rowName === "C") tempTable[2][+col - 1] = +value;
-      else if (rowName === "D") tempTable[3][+col - 1] = +value;
-      else if (rowName === "E") tempTable[4][+col - 1] = +value;
-      else if (rowName === "F") tempTable[5][+col - 1] = +value;
-      else if (rowName === "G") tempTable[6][+col - 1] = +value;
-      else if (rowName === "H") tempTable[7][+col - 1] = +value;
-      else if (rowName === "I") tempTable[8][+col - 1] = +value;
-    }
-  };
-
-  const newTableGenerator = () => {
-    const newTable = [].concat(
-      tempTable.map((el) => {
-        return el;
-      })
+  const encodeBoard = (board) =>
+    board.reduce(
+        (result, row, i) =>
+        result +
+        `%5B${encodeURIComponent(row)}%5D${i === board.length - 1 ? "" : "%2C"}`,
+        ""
     );
-    return newTable;
-  };
+
+  const encodeParams = (params) =>
+    Object.keys(params)
+        .map((key) => key + "=" + `%5B${encodeBoard(params[key])}%5D`)
+        .join("&");
 
   const changeHandler = (e) => {
     if (e.target.value.length > 1) {
@@ -59,25 +33,32 @@ function Board(props) {
       return;
     }
     const [row, col] = e.target.id.split("");
-    tempTable[+row][+col] = +e.target.value;
+    setTable(()=>{
+        return table.map((arr,i)=>{
+            if(i !== +row){
+                return [...arr]
+            } else{
+                return arr.map((el,j) => j === +col? +e.target.value : el)
+            }
+        })
+    })
   };
 
   const clickHandler = (grade) => {
-    tempTable = new Array(9).fill().map(() => {
+    let tTable = new Array(9).fill().map(() => {
       return new Array(9).fill(0);
     });
     if (grade === "clear") {
-      setTable(newTableGenerator());
+      setTable(tTable);
       return;
     }
     axios
       .get(
-        `https://vast-chamber-17969.herokuapp.com/generate?difficulty=${grade}`
+        `https://sugoku.onrender.com/board?difficulty=${grade}`
       )
       .then((res) => {
-        difficulty = res.data.difficulty;
-        convert(res.data.puzzle);
-        setTable(newTableGenerator());
+        setDifficulty(grade);
+        setTable(()=>res.data.board);
         setStatus("unsolved");
       })
       .catch((err) => console.log(err));
@@ -85,10 +66,10 @@ function Board(props) {
 
   const validsolveHandler = (type) => {
     const data = {
-      board: tempTable,
+      board: table,
     };
 
-    fetch(`https://sugoku.herokuapp.com/${type}`, {
+    fetch(`https://sugoku.onrender.com/${type}`, {
       method: "POST",
       body: encodeParams(data),
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -99,8 +80,7 @@ function Board(props) {
         if (type === "solve") {
           if (response.status === "unsolvable") setStatus("unsolvable");
           else if (response.status === "solved") {
-            tempTable = response.solution;
-            setTable(newTableGenerator());
+            setTable( ()=> response.solution);
             setStatus(response.status);
           }
         }
@@ -108,15 +88,13 @@ function Board(props) {
       .catch((err) => console.log(err));
   };
 
-  console.log("trial-2");
 
   useEffect(() => {
     axios
-      .get(" https://vast-chamber-17969.herokuapp.com/generate?difficulty=easy")
+      .get("https://sugoku.onrender.com/board?difficulty=easy")
       .then((res) => {
-        difficulty = res.data.difficulty;
-        convert(res.data.puzzle);
-        setTable(newTableGenerator());
+        setDifficulty('easy')
+        setTable(()=>res.data.board);
       })
       .catch((err) => console.log(err));
   }, []);
@@ -126,12 +104,8 @@ function Board(props) {
       return (
         <Input
           changeHandler={changeHandler}
-          tempTable={tempTable}
-          // tempTable={[].concat(
-          //   table.map((el) => {
-          //     return el;
-          //   })
-          // )}
+          tempTable={table}
+          key={'outer'+i+j}
           i={i}
           j={j}
         />
@@ -151,25 +125,25 @@ function Board(props) {
             <div className="ui buttons">
               <button
                 className="ui basic button"
-                onClick={clickHandler.bind(this, "easy")}
+                onClick={() => clickHandler("easy")}
               >
                 Easy
               </button>
               <button
                 className="ui basic button"
-                onClick={clickHandler.bind(this, "medium")}
+                onClick={() => clickHandler("medium")}
               >
                 Medium
               </button>
               <button
                 className="ui basic button"
-                onClick={clickHandler.bind(this, "hard")}
+                onClick={() => clickHandler("hard")}
               >
                 Hard
               </button>
               <button
                 className="ui basic button clear"
-                onClick={clickHandler.bind(this, "clear")}
+                onClick={() => clickHandler("clear")}
               >
                 Clear
               </button>
@@ -180,7 +154,7 @@ function Board(props) {
           <div className="ui buttons" tabIndex="0">
             <div
               className="ui basic button clear validate"
-              onClick={validsolveHandler.bind(this, "validate")}
+              onClick={() => validsolveHandler("validate")}
             >
               <icons.checkIcon /> Validate
             </div>
@@ -196,7 +170,7 @@ function Board(props) {
         <section className="section-1">
           <button
             className="ui basic button clear solve"
-            onClick={validsolveHandler.bind(this, "solve")}
+            onClick={() => validsolveHandler("solve")}
           >
             Solve
           </button>
